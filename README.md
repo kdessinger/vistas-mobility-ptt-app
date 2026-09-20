@@ -4,6 +4,8 @@ A role-based push-to-talk web application for school transportation. Three disti
 
 **Live demo:** https://ptt-demo.kdessinger.com/
 
+**Mobile app:** Capacitor scaffold included — see [MOBILE_BUILD.md](MOBILE_BUILD.md) for the iOS/Android build instructions.
+
 ---
 
 ## Quick Start

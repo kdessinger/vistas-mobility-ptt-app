@@ -1,14 +1,31 @@
 {
-  "name": "ptt-demo",
+  "name": "vistas-mobility-ptt-app",
   "version": "1.0.0",
+  "description": "Role-based push-to-talk for school transportation — Parent, Driver, and Operations",
   "private": true,
   "scripts": {
     "install:all": "npm install && cd client && npm install && cd ../server && npm install",
     "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm run dev\"",
     "build": "cd client && npm run build",
-    "start": "cd server && npm start"
+    "start": "cd server && npm start",
+    "sync": "cap sync",
+    "android:open": "cap open android",
+    "ios:open": "cap open ios",
+    "add:android": "cap add android",
+    "add:ios": "cap add ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/app": "^6.0.1",
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/haptics": "^6.0.1",
+    "@capacitor/ios": "^6.1.2",
+    "@capacitor/network": "^6.0.1",
+    "@capacitor/push-notifications": "^6.0.1",
+    "@capacitor/status-bar": "^6.0.1"
   },
   "devDependencies": {
+    "@capacitor/cli": "^6.1.2",
     "concurrently": "^9.0.0"
   }
 }

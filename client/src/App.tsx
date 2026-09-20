@@ -14,6 +14,8 @@ import DriverPortal from './pages/DriverPortal';
 import OperationsPortal from './pages/OperationsPortal';
 import ParentVerification from './pages/ParentVerification';
 import DeviceFrame from './components/DeviceFrame';
+import { isNative } from './lib/platform';
+import { applyDarkStatusBar, requestPushPermissions } from './lib/native';
 import type { UserRole } from './types';
 
 const ROLE_PATHS: Record<UserRole, string> = {
@@ -49,6 +51,14 @@ function AppRouter() {
     }
   }, [role, setRole, setName]);
 
+  // Native shell initialization (Capacitor): style the status bar and ask for
+  // push permission once the user has chosen a role.
+  useEffect(() => {
+    if (!isNative()) return;
+    void applyDarkStatusBar();
+    if (role) void requestPushPermissions();
+  }, [role]);
+
   // Route the user to their portal once a role is set.
   useEffect(() => {
     if (!role) return;
@@ -64,6 +74,10 @@ function AppRouter() {
     return null;
   };
 
+  // On real phones the device-frame chrome is visual noise. Hide it when the
+  // app is running inside the native shell so the portals fill the screen.
+  const skipDeviceFrame = isNative();
+
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
@@ -72,9 +86,13 @@ function AppRouter() {
         element={
           <>
             {requireRole('parent')}
-            <DeviceFrame device="iphone">
+            {skipDeviceFrame ? (
               <ParentVerification onVerified={() => navigate('/parent')} />
-            </DeviceFrame>
+            ) : (
+              <DeviceFrame device="iphone">
+                <ParentVerification onVerified={() => navigate('/parent')} />
+              </DeviceFrame>
+            )}
           </>
         }
       />
@@ -83,9 +101,13 @@ function AppRouter() {
         element={
           <>
             {requireRole('parent')}
-            <DeviceFrame device="iphone">
+            {skipDeviceFrame ? (
               <ParentPortal sendMessage={sendMessage} />
-            </DeviceFrame>
+            ) : (
+              <DeviceFrame device="iphone">
+                <ParentPortal sendMessage={sendMessage} />
+              </DeviceFrame>
+            )}
           </>
         }
       />
@@ -94,9 +116,13 @@ function AppRouter() {
         element={
           <>
             {requireRole('driver')}
-            <DeviceFrame device="samsung-tablet">
+            {skipDeviceFrame ? (
               <DriverPortal sendMessage={sendMessage} />
-            </DeviceFrame>
+            ) : (
+              <DeviceFrame device="samsung-tablet">
+                <DriverPortal sendMessage={sendMessage} />
+              </DeviceFrame>
+            )}
           </>
         }
       />
@@ -105,9 +131,13 @@ function AppRouter() {
         element={
           <>
             {requireRole('operations')}
-            <DeviceFrame device="ipad">
+            {skipDeviceFrame ? (
               <OperationsPortal sendMessage={sendMessage} />
-            </DeviceFrame>
+            ) : (
+              <DeviceFrame device="ipad">
+                <OperationsPortal sendMessage={sendMessage} />
+              </DeviceFrame>
+            )}
           </>
         }
       />

@@ -8,11 +8,25 @@ import type {
   User,
   UserRole,
 } from '../types';
+import { isNative } from '../lib/platform';
 
-const WS_URL =
-  window.location.hostname === 'localhost' && window.location.port === '5173'
-    ? 'ws://localhost:3001'
-    : `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}`;
+// In the native shell, the device loads the app from `https://localhost`
+// (Capacitor scheme) and cannot reach the demo signaling server on its own.
+// The signaling URL is read from `window.__PTT_WS_URL__` (set in capacitor.config
+// via injected config) with a fallback to the live demo.
+const DEFAULT_PUBLIC_WS = 'wss://ptt-demo.kdessinger.com';
+
+function getWsUrl(): string {
+  const fromGlobal = (window as unknown as { __PTT_WS_URL__?: string }).__PTT_WS_URL__;
+  if (fromGlobal) return fromGlobal;
+  if (isNative()) return DEFAULT_PUBLIC_WS;
+  if (window.location.hostname === 'localhost' && window.location.port === '5173') {
+    return 'ws://localhost:3001';
+  }
+  return `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}`;
+}
+
+const WS_URL = getWsUrl();
 const RECONNECT_DELAY = 3000;
 
 interface UseWebSocketApi {
