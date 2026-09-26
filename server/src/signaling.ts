@@ -284,6 +284,7 @@ export function handleConnection(ws: WebSocket): void {
             mimeType: msg.mimeType,
             senderId: userId,
             targetId: msg.targetId,
+            transcript: msg.transcript,
           });
           if (userRole === 'driver' && msg.targetId) {
             const target = room.getUser(msg.targetId);
@@ -322,15 +323,16 @@ export function handleConnection(ws: WebSocket): void {
             send(ws, { type: 'error', message: 'Invalid audio chunk' });
             break;
           }
-          // Relay to driver and ops only
-          const driver = room.getDriverSocket();
-          if (driver && driver.readyState === WebSocket.OPEN) {
-            driver.send(JSON.stringify({
-              type: 'audio-chunk',
-              chunk: msg.chunk,
-              mimeType: msg.mimeType,
-              senderId: userId,
-            }));
+          // Relay to ALL drivers (handles multiple drivers / reconnects gracefully)
+          const payload = JSON.stringify({
+            type: 'audio-chunk',
+            chunk: msg.chunk,
+            mimeType: msg.mimeType,
+            senderId: userId,
+            transcript: msg.transcript,
+          });
+          for (const driver of room.getAllDriverSockets()) {
+            driver.send(payload);
           }
           for (const socket of room.getAllSockets()) {
             const uid = (socket as any).userId as string | undefined;
@@ -341,6 +343,7 @@ export function handleConnection(ws: WebSocket): void {
                 chunk: msg.chunk,
                 mimeType: msg.mimeType,
                 senderId: userId,
+                transcript: msg.transcript,
               }));
             }
           }

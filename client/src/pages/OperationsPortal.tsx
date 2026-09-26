@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useStore } from '../store/useStore';
 import ConnectionBar from '../components/ConnectionBar';
 import PTTButton from '../components/PTTButton';
+import TranscriptFeed from '../components/TranscriptFeed';
 import { useAudioPlayback } from '../hooks/useAudioPlayback';
 import { useWebRTCAudio } from '../hooks/useWebRTCAudio';
 import { playRequestAlert } from '../lib/audioFeedback';
@@ -24,6 +25,7 @@ import {
   MessageSquare,
   Ban,
   Signal,
+  FileText,
 } from 'lucide-react';
 import type { ClientMessage, PendingRequest, UserRole, AuditEvent } from '../types';
 
@@ -109,6 +111,12 @@ function formatAuditEvent(evt: AuditEvent): { icon: React.ReactNode; title: stri
           p.redLights !== undefined ? `Red: ${p.redLights ? 'ON' : 'OFF'}` : '',
           p.doorOpen !== undefined ? `Door: ${p.doorOpen ? 'OPEN' : 'CLOSED'}` : '',
         ].filter(Boolean).join(' · '),
+      };
+    case 'voice-transcript':
+      return {
+        icon: <FileText className="w-3.5 h-3.5 text-violet-400" />,
+        title: `${p.senderName || 'User'} said`,
+        detail: p.transcript as string,
       };
     default:
       return {
@@ -329,6 +337,9 @@ export default function OperationsPortal({ sendMessage }: Props) {
             ))}
           </div>
         </div>
+
+        {/* Transcripts */}
+        <TranscriptFeed />
 
         {/* Audit feed */}
         <div className="bg-[#111827] rounded-2xl p-4 border border-white/5">

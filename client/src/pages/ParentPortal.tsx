@@ -5,7 +5,9 @@ import RequestModal from '../components/RequestModal';
 
 import { useAudioPlayback } from '../hooks/useAudioPlayback';
 import { useVoiceMessageCapture } from '../hooks/useVoiceMessageCapture';
+import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 import { playPttPressTone, playRogerBeep, preloadPttPressTone } from '../lib/audioFeedback';
+import { isNative } from '../lib/platform';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   MessageSquare,
@@ -80,6 +82,7 @@ export default function ParentPortal({ sendMessage }: Props) {
   // Parent speak (after request accepted)
   const [parentSpeaking, setParentSpeaking] = useState(false);
   const { start, stop, cancel } = useVoiceMessageCapture();
+  const { startRecognition, stopRecognition, getTranscript, isAvailable } = useSpeechRecognition();
   const pressedRef = useRef(false);
   const startPromiseRef = useRef<Promise<boolean> | null>(null);
 
@@ -90,31 +93,41 @@ export default function ParentPortal({ sendMessage }: Props) {
     sendMessage({ type: 'parent-transmit-start' });
     startPromiseRef.current = start();
     playPttPressTone();
-  }, [hasAcceptedRequest, start]);
+    if (isAvailable) startRecognition();
+  }, [hasAcceptedRequest, start, isAvailable, startRecognition]);
 
   const finishSpeak = useCallback(async () => {
     if (!pressedRef.current) return;
     pressedRef.current = false;
     await startPromiseRef.current;
+    if (isAvailable) stopRecognition();
+    // Allow STT onresult callbacks to flush
+    await new Promise((resolve) => setTimeout(resolve, 100));
     const message = await stop();
     if (message?.hasSpeech) {
-      sendMessage({ type: 'audio-chunk', chunk: message.base64, mimeType: message.mimeType });
+      sendMessage({
+        type: 'audio-chunk',
+        chunk: message.base64,
+        mimeType: message.mimeType,
+        transcript: getTranscript() || undefined,
+      });
       if (message.durationMs >= 3000) sendMessage({ type: 'end-speak' });
     }
     sendMessage({ type: 'parent-transmit-end' });
     setParentSpeaking(false);
     startPromiseRef.current = null;
     playRogerBeep();
-  }, [sendMessage, stop]);
+  }, [sendMessage, stop, isAvailable, stopRecognition, getTranscript]);
 
   useEffect(() => {
     if (!hasAcceptedRequest && parentSpeaking) {
       pressedRef.current = false;
+      if (isAvailable) stopRecognition();
       cancel();
       sendMessage({ type: 'parent-transmit-end' });
       setParentSpeaking(false);
     }
-  }, [cancel, hasAcceptedRequest, parentSpeaking]);
+  }, [cancel, hasAcceptedRequest, parentSpeaking, isAvailable, stopRecognition]);
 
   return (
     <div className="min-h-full flex flex-col bg-[#0a0f1c]">
@@ -182,36 +195,44 @@ export default function ParentPortal({ sendMessage }: Props) {
 
         {/* Speak button (shown only when request accepted) */}
         {hasAcceptedRequest && (
-          <button
-            onPointerDown={(event) => {
-              // Start first. Some mobile webviews reject pointer capture, but
-              // that cannot be allowed to cancel a parent's PTT press.
-              event.preventDefault();
-              beginSpeak();
-              try {
-                event.currentTarget.setPointerCapture(event.pointerId);
-              } catch {
-                // Pointer capture is only a release-delivery aid.
-              }
-            }}
-            onPointerUp={finishSpeak}
-            onPointerCancel={() => {
-              pressedRef.current = false;
-              cancel();
-              sendMessage({ type: 'parent-transmit-end' });
-              setParentSpeaking(false);
-            }}
-            onContextMenu={(event) => event.preventDefault()}
-            style={{ touchAction: 'none' }}
-            className={`w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl font-bold text-sm shadow-lg transition-all active:scale-[0.98] ${
-              parentSpeaking
-                ? 'bg-gradient-to-r from-red-500 to-red-600 shadow-red-500/20 text-white'
-                : 'bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-500/20 text-white'
-            }`}
-          >
-            {parentSpeaking ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-            {parentSpeaking ? 'Release to send message' : 'Press and hold to speak'}
-          </button>
+          <div className="space-y-2">
+            <button
+              onPointerDown={(event) => {
+                event.preventDefault();
+                beginSpeak();
+                try {
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                } catch {}
+              }}
+              onPointerUp={finishSpeak}
+              onPointerCancel={() => {
+                pressedRef.current = false;
+                if (isAvailable) stopRecognition();
+                cancel();
+                sendMessage({ type: 'parent-transmit-end' });
+                setParentSpeaking(false);
+              }}
+              onDoubleClick={() => {
+                if (!isNative()) {
+                  if (!parentSpeaking) {
+                    beginSpeak();
+                  } else {
+                    finishSpeak();
+                  }
+                }
+              }}
+              onContextMenu={(event) => event.preventDefault()}
+              style={{ touchAction: 'none' }}
+              className={`w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl font-bold text-sm shadow-lg transition-all active:scale-[0.98] ${
+                parentSpeaking
+                  ? 'bg-gradient-to-r from-red-500 to-red-600 shadow-red-500/20 text-white'
+                  : 'bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-500/20 text-white'
+              }`}
+            >
+              {parentSpeaking ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+              {parentSpeaking ? 'Release to send message' : isNative() ? 'Press and hold to speak' : 'Double-click to speak'}
+            </button>
+          </div>
         )}
 
         {/* Request button */}

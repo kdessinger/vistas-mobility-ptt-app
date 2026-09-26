@@ -133,9 +133,10 @@ export interface LocationMessage {
 
 export interface AudioChunkMessage {
   type: 'audio-chunk';
-  chunk: string; // base64
-  mimeType?: string;
+  chunk: string;
+  mimeType: string;
   targetId?: string;
+  transcript?: string;
 }
 
 export interface CallStartMessage {
@@ -184,7 +185,7 @@ export type ServerMessage =
   | { type: 'webrtc-answer'; sdp: string; senderId: string }
   | { type: 'webrtc-ice'; candidate: RTCIceCandidateInit; senderId: string }
   | { type: 'emergency-message'; message: string; senderId: string; timestamp: string }
-  | { type: 'audio-chunk'; chunk: string; senderId: string; mimeType?: string; targetId?: string }
+  | { type: 'audio-chunk'; chunk: string; senderId: string; mimeType?: string; targetId?: string; transcript?: string }
   | { type: 'call-started'; caller: User }
   | { type: 'call-ended'; callerId: string }
   | { type: 'error'; message: string }

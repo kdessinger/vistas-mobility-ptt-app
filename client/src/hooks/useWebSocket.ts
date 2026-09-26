@@ -163,27 +163,34 @@ export function useWebSocket(role: UserRole | null, name: string | null): UseWeb
         case 'webrtc-ice':
         case 'user-left':
         case 'emergency-message':
-        case 'audio-chunk':
-          // WebRTC signaling is dispatched via window events from useWebRTC.
-          // user-left is already reflected in the next room-state.
-          // emergency-message is logged as an audit event.
+        case 'audio-chunk': {
+          // Re-broadcast on a window event for audio/rtc listeners
+          window.dispatchEvent(new CustomEvent('ptt-message', { detail: msg }));
+
           if (msg.type === 'emergency-message') {
             appendAuditEvent({
               type: 'emergency-message',
-              payload: {
-                senderId: msg.senderId,
-                message: msg.message,
-              },
+              payload: { senderId: msg.senderId, message: msg.message },
               timestamp: msg.timestamp,
             });
           } else if (msg.type === 'user-left') {
             removeUser(msg.userId);
+          } else if (msg.type === 'audio-chunk' && msg.transcript) {
+            const sender = useStore.getState().users.find((u) => u.id === msg.senderId);
+            useStore.getState().addIncomingTranscript({
+              senderId: msg.senderId,
+              senderName: sender?.name || msg.senderId,
+              text: msg.transcript,
+              timestamp: new Date().toISOString(),
+            });
+            appendAuditEvent({
+              type: 'voice-transcript',
+              payload: { senderId: msg.senderId, senderName: sender?.name, transcript: msg.transcript },
+              timestamp: new Date().toISOString(),
+            });
           }
-          // Re-broadcast on a window event for useWebRTC listeners
-          window.dispatchEvent(
-            new CustomEvent('ptt-message', { detail: msg })
-          );
           break;
+        }
 
         case 'error': {
           // Surface server-side errors to the console; UI surfaces them indirectly.

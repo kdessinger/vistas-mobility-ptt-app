@@ -62,10 +62,26 @@ export class Room {
   getDriverSocket(): WebSocket | undefined {
     for (const [id, user] of this.users) {
       if (user.role === 'driver') {
-        return this.userSockets.get(id);
+        const sock = this.userSockets.get(id);
+        if (sock && sock.readyState === 1) {
+          return sock;
+        }
       }
     }
     return undefined;
+  }
+
+  getAllDriverSockets(): WebSocket[] {
+    const sockets: WebSocket[] = [];
+    for (const [id, user] of this.users) {
+      if (user.role === 'driver') {
+        const sock = this.userSockets.get(id);
+        if (sock && sock.readyState === 1) {
+          sockets.push(sock);
+        }
+      }
+    }
+    return sockets;
   }
 
   hasDriverAndOperations(): boolean {

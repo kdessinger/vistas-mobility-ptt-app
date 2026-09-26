@@ -59,6 +59,10 @@ interface AppState {
 
   setRequestModalOpen: (open: boolean) => void;
 
+  // Incoming transcripts (STT from received audio)
+  incomingTranscripts: Array<{ senderId: string; senderName: string; text: string; timestamp: string }>;
+  addIncomingTranscript: (item: { senderId: string; senderName: string; text: string; timestamp: string }) => void;
+
   reset: () => void;
 }
 
@@ -80,6 +84,8 @@ export const useStore = create<AppState>((set) => ({
   callPartner: null,
 
   requestModalOpen: false,
+
+  incomingTranscripts: [],
 
   setRole: (role) => set({ role }),
   setName: (name) => set({ name }),
@@ -135,6 +141,11 @@ export const useStore = create<AppState>((set) => ({
 
   setRequestModalOpen: (requestModalOpen) => set({ requestModalOpen }),
 
+  addIncomingTranscript: (item) =>
+    set((state) => ({
+      incomingTranscripts: [...state.incomingTranscripts.slice(-49), item],
+    })),
+
   reset: () =>
     set({
       role: null,
@@ -150,5 +161,6 @@ export const useStore = create<AppState>((set) => ({
       callStartTime: null,
       callPartner: null,
       requestModalOpen: false,
+      incomingTranscripts: [],
     }),
 }));

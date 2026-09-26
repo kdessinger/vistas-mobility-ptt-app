@@ -45,6 +45,7 @@ cd server && npm run dev   # ts-node-dev on :3001
 | **Emergency broadcast** | Operations can send a text emergency message to all connected users. |
 | **Cross-browser audio** | Raw PCM capture via Web Audio API — works on Chrome, Firefox, Edge, Safari, and iOS. |
 | **Background recovery** | WebSocket reconnects and AudioContext resumes automatically when returning from a locked/minimized state on mobile. |
+| **Prototype transcript relay** | Where the browser exposes Web Speech Recognition, a sender can see a live transcript while holding PTT and recipients can receive the completed text with the audio. Availability and accuracy are browser-dependent; it is not production transcription. |
 | **Device frames** | Realistic phone/tablet skins for demo presentation (iPhone, Samsung tablet, iPad). |
 
 ---
@@ -114,7 +115,8 @@ To deploy your own instance:
 - This is a **functional prototype**, not a production system.
 - No real authentication, no database persistence, no GPS tracking.
 - All state is in-memory; a server restart clears everything.
-- Voice data is transient — PCM chunks are relayed and immediately discarded.
+- Voice data is transient — PCM chunks are relayed and immediately discarded. The prototype may also relay browser-generated transcript text to connected Driver/Operations views; neither audio nor transcript is persisted by this demo server.
+- Browser speech recognition availability, processing location, and accuracy vary by browser and platform. It must not be treated as a production transcription, retention, accessibility, or privacy implementation.
 - Do not use this for actual student transportation without legal, privacy, and operational review.
 
 ---

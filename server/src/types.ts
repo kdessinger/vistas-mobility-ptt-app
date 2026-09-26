@@ -136,9 +136,10 @@ export interface LocationMessage {
 
 export interface AudioChunkMessage {
   type: 'audio-chunk';
-  chunk: string; // base64
-  mimeType?: string;
+  chunk: string;
+  mimeType: string;
   targetId?: string;
+  transcript?: string;
 }
 
 export interface CallStartMessage {

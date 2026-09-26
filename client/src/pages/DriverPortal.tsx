@@ -7,6 +7,7 @@ import BusSensorsBar from '../components/BusSensorsBar';
 
 import { useAudioPlayback } from '../hooks/useAudioPlayback';
 import Speedometer from '../components/Speedometer';
+import TranscriptFeed from '../components/TranscriptFeed';
 import { playRequestAlert } from '../lib/audioFeedback';
 import {
   AlertCircle,
@@ -183,6 +184,9 @@ export default function DriverPortal({ sendMessage }: Props) {
               </div>
             </div>
           </div>
+
+          {/* Transcripts */}
+          <TranscriptFeed />
 
           {/* Requests */}
           <div className="bg-[#111827] rounded-2xl p-4 border border-white/5 flex-shrink-0">
