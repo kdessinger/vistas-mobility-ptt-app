@@ -1,27 +1,26 @@
 # Vistas Mobility PTT — Android build
 
-`vistas-ptt-3bd1d1dd.apk` — **current** build (versionCode 2, versionName 0.1.1).
+**`vistas-ptt-c35c346a.apk` is the only build here.** Older files are deleted rather than
+left beside it, so the newest is never ambiguous.
 
-- Package: `com.vistasmobility.ptt.preview`
-- Requires Android 14+ (minSdk 34)
-- Debug build signed with a debug key: for testing on real phones, not a store release
-- Size 2796222 bytes
-- SHA-256 `3bd1d1dd471ca4e2004722bd5a21d83b9534af50ba1c8f1327e66f7ea1511e15`
+- versionCode 3, versionName 0.1.2 (the on-screen title reads the package version directly)
+- Package `com.vistasmobility.ptt.preview` · Android 14+ · debug-signed, for testing only
+- Size 2796774 bytes · SHA-256 `c35c346a128d704fd32c2ab924976cd9675f86d032b2ce07efe9ca2d8e6d28cd`
 
-## What this build adds
+## What 0.1.2 adds
 
-- A refused sign-in now names the **exact step that failed** and the real cause.
-  A 403 `csrf_mismatch` is reported as a session/token problem, not as a wrong
-  password. The status line ends with `[failed at: csrf|login|session|context]`.
+- The header version can no longer drift from the installed package: it is read from
+  BuildConfig.VERSION_NAME, not hardcoded.
+- A refused sign-in names **which call failed** and the real cause:
+  `[failed at: csrf|login|session|context]`, with the HTTP status and the server's
+  error code. A 403 `csrf_mismatch` is reported as a token problem, not a password one.
 
 ## Signing in
 
-- **Server origin** must be a bare HTTPS origin with no path: `https://ptt.kdessinger.com`
-  (pre-filled; a pasted console URL is normalised).
-- The device must be able to **resolve that hostname through the system resolver**.
-  A browser succeeding does not prove this: browsers usually use DNS-over-HTTPS on
-  443 while a native app uses the Android system resolver. If you see
-  "Unable to resolve host", change Private DNS, set a manual DNS, or use cellular.
+- Origin must be a bare HTTPS origin, no path: `https://ptt.kdessinger.com` (pre-filled).
+- The device must resolve that hostname **through the Android system resolver**. A
+  browser succeeding does not prove it: browsers use DNS-over-HTTPS on 443, a native app
+  does not. "Unable to resolve host" means the network, not the app.
 - IP addresses are deliberately not accepted as an origin.
 
-Verify after download: `sha256sum vistas-ptt-3bd1d1dd.apk`
+Verify after download: `sha256sum vistas-ptt-c35c346a.apk`
