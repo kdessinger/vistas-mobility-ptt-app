@@ -1,26 +1,38 @@
 # Vistas Mobility PTT — Android build
 
-**`vistas-ptt-c35c346a.apk` is the only build here.** Older files are deleted rather than
-left beside it, so the newest is never ambiguous.
+## Current download: **[Vistas Mobility PTT 0.1.3](vistas-ptt-0.1.3.apk)**
 
-- versionCode 3, versionName 0.1.2 (the on-screen title reads the package version directly)
-- Package `com.vistasmobility.ptt.preview` · Android 14+ · debug-signed, for testing only
-- Size 2796774 bytes · SHA-256 `c35c346a128d704fd32c2ab924976cd9675f86d032b2ce07efe9ca2d8e6d28cd`
+Use `vistas-ptt-0.1.3.apk`, not the older hash-named diagnostic build.
 
-## What 0.1.2 adds
+- versionCode **4**, versionName **0.1.3**; the on-screen title reads the package version.
+- Package `com.vistasmobility.ptt.preview` · Android 14+ · debug-signed, for testing.
+- Size **2,797,202 bytes**.
+- SHA-256 `caf3a0707b9d0047adc5a8398a1fa5c92cc9ae22bb86b09cae86653b44a3551a`.
 
-- The header version can no longer drift from the installed package: it is read from
-  BuildConfig.VERSION_NAME, not hardcoded.
-- A refused sign-in names **which call failed** and the real cause:
-  `[failed at: csrf|login|session|context]`, with the HTTP status and the server's
-  error code. A 403 `csrf_mismatch` is reported as a token problem, not a password one.
+## Login fix in 0.1.3
 
-## Signing in
+The server accepted the password but the next session request returned 401.
+The Java cookie manager interpreted the session cookie's `Max-Age` as a legacy
+version-1 cookie and sent a quoted session value with `$Version`/`$Path` metadata.
+The server did not accept that session representation.
 
-- Origin must be a bare HTTPS origin, no path: `https://ptt.kdessinger.com` (pre-filled).
-- The device must resolve that hostname **through the Android system resolver**. A
-  browser succeeding does not prove it: browsers use DNS-over-HTTPS on 443, a native app
-  does not. "Unable to resolve host" means the network, not the app.
-- IP addresses are deliberately not accepted as an origin.
+The client now uses version-0 `name=value` serialization while preserving the
+private cookie store, expiry, Secure flag, and domain/path scope. No server
+security rules or password checks were loosened.
 
-Verify after download: `sha256sum vistas-ptt-c35c346a.apk`
+Evidence: the transport regression test fails without the fix; all nine JVM
+suites pass with it; the app's actual Java transport against the public server
+passes login → CSRF refresh → session → communications context after the fix,
+and failed at session with HTTP 401 before it.
+
+Errors after a successful login no longer tell you to check the password.
+
+## Installation and sign-in
+
+Install over the existing app; no uninstall is needed if Android accepts the update.
+Open it and confirm the title says **Vistas Mobility PTT · 0.1.3**.
+Server origin: `https://ptt.kdessinger.com` (pre-filled).
+A browser can use a different DNS resolver from the native app; an "Unable to
+resolve host" error needs resolver/network investigation, not a password reset.
+
+This is a development build, not evidence of production readiness or safety certification.
