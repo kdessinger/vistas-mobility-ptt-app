@@ -1,25 +1,27 @@
 # Vistas Mobility PTT — Android build
 
-`vistas-ptt-01c2c9a2.apk` — **current** driver and parent client.
+`vistas-ptt-3bd1d1dd.apk` — **current** build (versionCode 2, versionName 0.1.1).
 
 - Package: `com.vistasmobility.ptt.preview`
 - Requires Android 14+ (minSdk 34)
 - Debug build signed with a debug key: for testing on real phones, not a store release
-- Size 2795346 bytes
-- SHA-256 `01c2c9a258254abaff37e93d46e301ddd13072c081913e452fcc3c000870997d`
+- Size 2796222 bytes
+- SHA-256 `3bd1d1dd471ca4e2004722bd5a21d83b9534af50ba1c8f1327e66f7ea1511e15`
 
-## Signing in on the phone
+## What this build adds
+
+- A refused sign-in now names the **exact step that failed** and the real cause.
+  A 403 `csrf_mismatch` is reported as a session/token problem, not as a wrong
+  password. The status line ends with `[failed at: csrf|login|session|context]`.
+
+## Signing in
 
 - **Server origin** must be a bare HTTPS origin with no path: `https://ptt.kdessinger.com`
-  (pre-filled). A pasted console URL is normalised automatically now.
-- **The phone's network must resolve that hostname.** If the app reports
-  "Unable to resolve host", the network is the problem, not the app: try cellular data,
-  or a network without DNS filtering.
-- IP addresses are deliberately NOT accepted as an origin.
+  (pre-filled; a pasted console URL is normalised).
+- The device must be able to **resolve that hostname through the system resolver**.
+  A browser succeeding does not prove this: browsers usually use DNS-over-HTTPS on
+  443 while a native app uses the Android system resolver. If you see
+  "Unable to resolve host", change Private DNS, set a manual DNS, or use cellular.
+- IP addresses are deliberately not accepted as an origin.
 
-Verify after download: `sha256sum vistas-ptt-01c2c9a2.apk`
-
-Install: allow "install from unknown sources", then open the APK.
-
-This is a test artifact, not a deployed service or a safety-certified product. It is not
-a replacement for 911, radio, dispatch, or district procedures.
+Verify after download: `sha256sum vistas-ptt-3bd1d1dd.apk`
