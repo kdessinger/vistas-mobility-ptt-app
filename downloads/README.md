@@ -1,8 +1,21 @@
 # Vistas Mobility PTT — Android build
 
-## Current download: **[Vistas Mobility PTT 0.1.8](vistas-ptt-0.1.8.apk)**
+## Current download: **[Vistas Mobility PTT 0.1.9](vistas-ptt-0.1.9.apk)**
 
-### Current build — 0.1.8
+### Current build — 0.1.9
+
+- versionCode **10**, versionName **0.1.9**, package `com.vistasmobility.ptt.preview`; Android **14+**, debug-signed testing build.
+- Size **2,851,705 bytes**; SHA-256 `1c3afb0ad9c8f3c3da12cce2b6c74d0b5de9f27ba53afb4f1b1b0504b50bc397`.
+- Signing certificate matches public 0.1.8 and 0.1.7; increased versionCode establishes upgrade compatibility, not successful device installation.
+- Includes the reviewed dark/teal UI and 0.1.8 message-history controls below.
+- Adds the parent-only approximate assigned-bus location pill for the selected authorized channel. Honest current/unknown/unavailable/off states; no street names, child-on-board claims, precise fleet tracking, or location history.
+- Freshness uses server age plus monotonic elapsed time, including during network failures. Missing timing or accuracy metadata fails closed; stale/non-current views clear coordinates. Display is limited to at most two decimal places.
+- Location remains independent of PTT. Native audio capture/playback settings are unchanged.
+- Verification: JVM suite exit 0, including BusLocationTest 66 assertions; spec PASS and independent quality APPROVED; APK assembly/version/signature verified. No connected Android device was available for installation or rendering. No production/Play Store readiness claim.
+
+After updating in place: confirm **Vistas Mobility PTT · 0.1.9**; verify old messages stay silent at login, Listen/Re-listen works, dismissal survives re-login, the parent location pill has honest state, and audible messages work in both directions with dispatch. Do not uninstall as the first troubleshooting step.
+
+### Historical build — 0.1.8
 
 - versionCode **9**, versionName **0.1.8**, package `com.vistasmobility.ptt.preview`; Android **14+**, debug-signed testing build.
 - Size **2,992,985 bytes**; SHA-256 `cab8fdf2454ded2ff23537424b3d7694dea99f889ce29944dadb8ea8d33f3f09`.
