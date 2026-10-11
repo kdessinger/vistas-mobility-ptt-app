@@ -1,8 +1,19 @@
 # Vistas Mobility PTT — Android build
 
-## Current download: **[Vistas Mobility PTT 0.1.9](vistas-ptt-0.1.9.apk)**
+## Current download: **[Vistas Mobility PTT 0.1.10](vistas-ptt-0.1.10.apk)**
 
-### Current build — 0.1.9
+### Current build — 0.1.10
+
+- versionCode **11**, versionName **0.1.10**; Android **14+**, debug-signed testing build; package unchanged.
+- Size **2,855,917 bytes**; SHA-256 `d7ed4da7af3b2cde0d5a9d8229bbf66614bb14a7ab87583c6bab0cff6d22363d`.
+- Parents and drivers now see only messages arriving after the current sign-in baseline. Older retained recordings are not displayed, downloaded, or transcribed by that session. Restore cannot reveal older sessions. Dispatch retains its authorized history. No shared recordings or transcripts are deleted.
+- Clearer dispatch text-request composer: labeled request type, visible optional 280-character note, selected-channel destination, and local sending/received-pending-review/refused/uncertain feedback. Duplicate taps are blocked while submitting; failed drafts are preserved and channel changes cannot misattribute a result.
+- Includes 0.1.9 approximate parent bus-location pill. Native audio settings remain unchanged. This is not the larger Zello-inspired layout redesign.
+- JVM suite and APK assembly passed; spec and independent quality review approved. Signer matches preceding published builds and versionCode increased. Actual installation and device rendering remain unverified for 0.1.10.
+
+Update in place and confirm **0.1.10**. Check that a new parent/driver sign-in has no old message pills, then receive and replay a new message. Submit a short text request and verify its pending status with dispatch. No production/Play Store readiness claim.
+
+### Historical build — 0.1.9
 
 - versionCode **10**, versionName **0.1.9**, package `com.vistasmobility.ptt.preview`; Android **14+**, debug-signed testing build.
 - Size **2,851,705 bytes**; SHA-256 `1c3afb0ad9c8f3c3da12cce2b6c74d0b5de9f27ba53afb4f1b1b0504b50bc397`.
