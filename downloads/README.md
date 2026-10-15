@@ -1,8 +1,21 @@
 # Vistas Mobility PTT — Android build
 
-## Current download: **[Vistas Mobility PTT 0.1.12](https://raw.githubusercontent.com/kdessinger/vistas-mobility-ptt-app/main/downloads/vistas-ptt-0.1.12.apk)**
+## Current download: **[Vistas Mobility PTT 0.1.13](https://raw.githubusercontent.com/kdessinger/vistas-mobility-ptt-app/main/downloads/vistas-ptt-0.1.13.apk)**
 
-### Current build — 0.1.12: launch-crash repair
+### Current build — 0.1.13: client-side persistent-channel and retained-history compatibility
+
+- versionCode **14**, versionName **0.1.13**; Android **14+**; same package `com.vistasmobility.ptt.preview` and same debug signing identity as 0.1.12.
+- Size **2,959,401 bytes**; SHA-256 `a3b0124bea7307c5f61da7bb9baf6cc0bb8979c6ca3edeb5b7b8722b6ae07839`.
+- **This is a client-compatibility release only. It does NOT activate anything on the server.** The platform API is **not migrated or restarted**, and **no connected channels are usable right now** as a result of this build. Existing synthetic rooms remain **expired** until an explicit, supported admin update is performed; this APK does not renew assignments or stationary grants, and installing it will not make an expired channel reappear.
+- Client understands an explicitly **persistent** channel: an explicit JSON `null` channel `effectiveUntil` now means "no scheduled end" instead of being treated as expired. Missing or malformed expiry still **fails closed** in every client, so an absent or malformed value is never read as persistent.
+- Retained, server-authorized history is now shown **across sign-ins** for parent and driver, consistent with a persistent chat room, while the immutable authenticated **LIVE** cursor boundary is preserved: retained rows never autoplay, cue, or download at login, reconnect, or Restore. Per-account + tenant dismissals and current membership/recipient authorization still govern what is shown.
+- Persistent channel lifetime is **not** permanent driver stationary admission or temporary dispatch coverage permission. A long-lived channel does not mean a driver remains admitted; the driver safe-state/stationary grant is separate and still expires.
+- Source: increments `ceb664d` (explicit persistent channel lifetime) + `6283f33` (explicit null `effectiveUntil` is persistent) and `2c51248` (retained history across sign-ins, no backlog autoplay); SPEC PASS and independent QUALITY APPROVED for both increments. No feature code was changed by this packaging commit.
+- Verification for this package: canonical Android JVM harness **32 programs** exit 0 (includes the new `PersistentLifetimeTest` and `HistoryPollCallbacksTest` against the real extracted render/drain/poll wiring); communications-web **95** tests pass; operations-web **27** tests pass; offline `assembleDebug` exit 0; embedded version/package/sdk/signer and a bounded dex secret/credential/private-address scan verified. **No connected device/emulator:** installation, native layout/WebView behavior, and audible PTT remain unverified. These checks do not prove device behaviour.
+- Recording cap remains **30 seconds** in this release; the approved **120-second default** is a separate pending coordinated client/server change. The theme is **unchanged** (light-mode contrast repair is separate pending work). **No background delivery is implemented.**
+- Known quality residuals (not addressed here; do not mistake for fixed): on first load the Android transcript fan-out may delay polling; pre-existing web caches may still hold retained audio; manual-only "download on demand" is **not** true for the web client. Feature code was not touched to solve these.
+
+### Historical build — 0.1.12: launch-crash repair (superseded by 0.1.13)
 
 - versionCode **13**, versionName **0.1.12**; Android **14+**, same package and debug signing identity as 0.1.11.
 - Size **2,957,005 bytes**; SHA-256 `3d8309efd485ff77a9c8a15411453143c1448fa3c4c6739fd7e792d446455099`.
