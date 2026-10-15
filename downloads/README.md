@@ -1,8 +1,20 @@
 # Vistas Mobility PTT — Android build
 
-## Current download: **[Vistas Mobility PTT 0.1.11](https://raw.githubusercontent.com/kdessinger/vistas-mobility-ptt-app/main/downloads/vistas-ptt-0.1.11.apk)**
+## Current download: **[Vistas Mobility PTT 0.1.12](https://raw.githubusercontent.com/kdessinger/vistas-mobility-ptt-app/main/downloads/vistas-ptt-0.1.12.apk)**
 
-### Current build — 0.1.11
+### Current build — 0.1.12: launch-crash repair
+
+- versionCode **13**, versionName **0.1.12**; Android **14+**, same package and debug signing identity as 0.1.11.
+- Size **2,957,005 bytes**; SHA-256 `3d8309efd485ff77a9c8a15411453143c1448fa3c4c6739fd7e792d446455099`.
+- Fixes a reproduced startup exception: settings buttons were attached twice to their parent. The same duplicate-attachment defect was removed from category detail buttons and bus-list rows. Buttons and their action handlers remain attached once.
+- Parent spec PASS and independent quality APPROVED for `bec7d76`. The new regression executes actual settings builders against single-parent-enforcing doubles; old source fails and repaired source passes. Independent review also reproduced/fixed the bus-list path in a scratch probe. Full JVM harness and offline APK build exit 0; embedded version/package/signature verified against the exact downloaded 0.1.11 baseline.
+- **No device launch or logcat verification is available.** This fixes the reproduced source defect but is not proof that every device startup failure is resolved. First acceptance check: install this APK and confirm the sign-in screen opens. Do not uninstall again as a troubleshooting step.
+- Recording cap remains **30 seconds** in this crash-only release. The approved **120-second default** is a separate pending coordinated client/server change. No backend deployment, assignment renewal, or new feature was mixed into this repair.
+- Retains the reviewed radio/settings features documented below; foreground-only communications, debug-build and production-readiness limits still apply.
+
+### Failed device build — 0.1.11 (superseded; do not use)
+
+Kenn reported an immediate launch crash, including after clean reinstall. Its published bytes remain preserved as the regression baseline; prior JVM/build review did not catch the Android view-parent violation. The historical feature notes below do not imply a working on-device release.
 
 - versionCode **12**, versionName **0.1.11**; Android **14+**, debug-signed testing build; package `com.vistasmobility.ptt.preview`.
 - Size **2,957,077 bytes**; SHA-256 `2c4e60b4931ed1ec62c5f36c03c2e02ff7d226595c149ade06ba9086ee77c250`.
