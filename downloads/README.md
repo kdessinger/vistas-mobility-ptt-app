@@ -1,8 +1,23 @@
 # Vistas Mobility PTT — Android build
 
-## Current download: **[Vistas Mobility PTT 0.1.10](vistas-ptt-0.1.10.apk)**
+## Current download: **[Vistas Mobility PTT 0.1.11](https://raw.githubusercontent.com/kdessinger/vistas-mobility-ptt-app/main/downloads/vistas-ptt-0.1.11.apk)**
 
-### Current build — 0.1.10
+### Current build — 0.1.11
+
+- versionCode **12**, versionName **0.1.11**; Android **14+**, debug-signed testing build; package `com.vistasmobility.ptt.preview`.
+- Size **2,957,077 bytes**; SHA-256 `2c4e60b4931ed1ec62c5f36c03c2e02ff7d226595c149ade06ba9086ee77c250`.
+- Same signing-certificate SHA-256 as the exact public 0.1.10 APK: `5a68b1bc38dd832fbade54b396dc843095a1035669f22b5df36dd94a84f3fa85`. Package, signer and increased versionCode meet update prerequisites; actual installation remains unverified.
+- Simpler navigation: centered sign-in → assigned bus list → selected bus Talk screen with a dominant microphone and Messages. Avatar and overflow Options open the same list/detail settings. Only authorized current assignments are listed; an empty list can mean an expired assignment, not a broken APK.
+- Original silent 3D radio entrance after sign-in: turn, zoom, then native bus list. Native Skip, reduced-motion bypass, a six-second fallback and lifecycle/renderer cleanup. Permission dialogs or focus loss may skip it; it is not a guaranteed animation on every login. The entrance preview invents no bus rows.
+- Functional per-account/device Appearance (System/Light/Dark, bounded text size), PTT buttons (HOLD default or opt-in tap-to-toggle), message cues, automatic voice playback, Silence and one receiving window. Recording has an explicit countdown/Cancel and the same 30-second cap. Cues and automatic playback are independent; quiet settings never delete shared messages or replay a queued backlog on resume. Foreground automatic playback retains its existing ON default.
+- Audio capture/format and transport are unchanged. Recording and playback remain foreground-only, with existing session, focus and driver-policy checks. Background receiving, boot recovery, Bluetooth/accessory-button operation and VOX are **not implemented or promised**; Audio and Behavior pages state their limits.
+- Profile screen-name editing requires the server `/v1/profile` feature and migration; this release does **not** deploy that backend. An unavailable server reports failure rather than claiming a local save. Login username and authority remain unchanged.
+- Preserves current-sign-in message history, manual Listen/Re-listen, personal dismissal, authorized inline transcripts and approximate assigned-bus location. Audio/transcript retention and location consent remain server-governed.
+- Verification: parent and independent spec/quality review, **25 Java harness programs plus 4 extracted-callback programs**, all exit 0; real Chromium radio-asset scenarios A–J pass; offline APK assembly, embedded version/resources, signature and bounded embedded-secret/private-address scans pass. These checks do **not** establish actual Android WebView rendering, physical audio, installation, or production/Play Store readiness.
+
+**Device check:** update over the existing app (do not uninstall first), confirm **0.1.11**, sign in, check assigned buses and the large Talk control; test HOLD and TOGGLE/Cancel, no old-message autoplay, repeated manual replay, and one audible message each way with dispatch. Check Silence/cues separately. Background/locked-screen delivery is not part of this build. No service deployment or assignment renewal is included.
+
+### Historical build — 0.1.10
 
 - versionCode **11**, versionName **0.1.10**; Android **14+**, debug-signed testing build; package unchanged.
 - Size **2,855,917 bytes**; SHA-256 `d7ed4da7af3b2cde0d5a9d8229bbf66614bb14a7ab87583c6bab0cff6d22363d`.
