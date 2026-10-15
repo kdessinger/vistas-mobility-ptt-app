@@ -1,8 +1,21 @@
 # Vistas Mobility PTT — Android build
 
-## Current download: **[Vistas Mobility PTT 0.1.13](https://raw.githubusercontent.com/kdessinger/vistas-mobility-ptt-app/main/downloads/vistas-ptt-0.1.13.apk)**
+## Current download: **[Vistas Mobility PTT 0.1.14](https://raw.githubusercontent.com/kdessinger/vistas-mobility-ptt-app/main/downloads/vistas-ptt-0.1.14.apk)**
 
-### Current build — 0.1.13: client-side persistent-channel and retained-history compatibility
+### Current build — 0.1.14: 120-second recording cap, count-up timer, sign-in status cleanup
+
+- versionCode **15**, versionName **0.1.14**; Android **14+**; same package `com.vistasmobility.ptt.preview` and same debug signing identity as 0.1.13.
+- Size **2,960,865 bytes**; SHA-256 `98f0070f2ef1ae83b66cb9cb7320e4ac16aa8362a1df701c921405a1cb63acf0`.
+- **The recording cap is now a fixed 120-second maximum** (replacing the 30-second cap), coordinated with the server/schema/web widening in `1bc1f64`. This is a fixed maximum, **not** a user-facing configuration setting.
+- **Visible count-up recording timer**: an `mm:ss` elapsed clock that starts from the actual successful capture (the press/permission/policy delay is not counted), is monotonic and non-negative, and stops on release/send, Cancel, cap, focus loss, and sign-out. The superseded "Ns left of 30" countdown wording is gone.
+- **Sign-in status cleanup**: the repeated signed-in microphone tutorial line is removed and stale pre-login status is cleared on a successful login. Permission-denial/action-needed messages and the honest connection caveat are preserved.
+- **This is a client release only. It does NOT change the backend or any account.** No migration, service restart, channel assignment, membership, stationary grant or credential change is part of this build; installing it will not make an expired channel reappear. The rehearsal backend has separately been migrated to 027/028/029 and reloaded, but the **assigned room remains expired / authorization-blocked** — there is **no usable connected channel right now**, and this APK cannot repair an expired assignment.
+- **Asymmetric compatibility:** old APKs (0.1.13 and earlier) cannot decode an incoming clip longer than 30 s. Participants must upgrade to 0.1.14 before long clips are exchanged; short clips remain mutually accepted.
+- Source: `1bc1f64` (coordinated 120 s cap, Android bounds), `92f8d03` (count-up timer), `5326dc6` (sign-in status cleanup); SPEC PASS and independent QUALITY APPROVED for each. No feature code was changed by this packaging commit.
+- Verification for this package: canonical Android JVM harness **35 programs** exit 0 (includes the new `DurationCapBoundsTest` and `RecordingTimerTest`); communications-web **96** tests pass; operations-web **27** tests pass; offline `assembleDebug` exit 0; embedded version/package/sdk/signer and a bounded dex secret/credential/private-address scan verified. **No connected device/emulator:** installation, native layout/WebView behaviour, audible PTT, and the 120 s cap on real hardware remain unverified. These checks do not prove device behaviour.
+- No new configuration setting, new navigation, People/Echo/AI, GPS, or background delivery was implemented. The theme is **unchanged**. Residuals not addressed: a slow ~20 s HTTP deadline and a 30 s STT timeout remain; first-load Android transcript fan-out may delay polling.
+
+### Historical build — 0.1.13: client-side persistent-channel and retained-history compatibility (superseded by 0.1.14)
 
 - versionCode **14**, versionName **0.1.13**; Android **14+**; same package `com.vistasmobility.ptt.preview` and same debug signing identity as 0.1.12.
 - Size **2,959,401 bytes**; SHA-256 `a3b0124bea7307c5f61da7bb9baf6cc0bb8979c6ca3edeb5b7b8722b6ae07839`.
