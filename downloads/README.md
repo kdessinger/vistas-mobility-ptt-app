@@ -1,8 +1,20 @@
 # Vistas Mobility PTT — Android build
 
-## Current download: **[Vistas Mobility PTT 0.1.18](https://raw.githubusercontent.com/kdessinger/vistas-mobility-ptt-app/main/downloads/vistas-ptt-0.1.18.apk)**
+## Current download: **[Vistas Mobility PTT 0.1.19](https://raw.githubusercontent.com/kdessinger/vistas-mobility-ptt-app/main/downloads/vistas-ptt-0.1.19.apk)**
 
-### Current build — 0.1.18: rotation keeps the live session + manual replay preemption
+### Current build — 0.1.19: author-history opt-in (client) + deployed author-history backend
+
+- versionCode **20**, versionName **0.1.19**; Android **14+**; same package `com.vistasmobility.ptt.preview` and same debug signing identity as 0.1.18.
+- Size **2,975,313 bytes**; SHA-256 `a000b947514c59bb48f51da01e1bf1fe5e55aac1178739b1ec938e7ed783bc70`.
+- **Author history opt-in (client).** The client reads the server context's `authorHistory` capability and, when present, requests the inbox with `includeOwn=true` so the author sees their own authored messages in retained history — **without ever self-playing**: an author's own row is never treated as a new arrival, never autoplayed, never cued and never eagerly downloaded. A server that does not advertise `authorHistory` (e.g. a released 0.1.18 build) receives no `includeOwn` and behaves exactly as before. The 0.1.18 rotation repair (`configChanges=orientation|screenSize`) and the honest caption `retained history across sign-ins` are preserved.
+- **Backend author-history increment deployed to the existing rehearsal host only** (`ptt.kdessinger.com` / `vistas-ptt-public.service`), commits `3aac815` + `cd2ca4c`, both SPEC PASS + independent QUALITY APPROVED. No Latham deployment. `/health` and `/readyz` 200 after restart; served assets byte-identical to the repo source. **Authenticated live capability read was not performed** (no secure auth workflow with existing credentials available; creating an account or sending a live message is out of scope) — the capability is demonstrated by the isolated integration suite and by source/build evidence, not a faked live check.
+- **This packaging commit does NOT change the backend or any account.** No migration, account, grant, room, membership or credential change is part of this build; installing it will not make an expired channel reappear. The **assigned room remains expired / authorization-blocked**.
+- Source: client `8cf5db3` (android: opt into author history without self playback); backend `3aac815` (opt-in author history + author manual audio access) + `cd2ca4c` (exclude author replay from recipient receipts). No feature code was changed by this packaging commit.
+- Verification for this package: canonical Android JVM harness **exit 0** (includes `HistoryPollCallbacksTest` — 40 assertions on the REAL extracted poll and the author-history opt-in wiring); offline `assembleDebug` exit 0 with `compileDebugJavaWithJavac` compiling the actual `MainActivity.java`; embedded version/package/sdk/signer and a bounded dex secret/credential/private-address scan verified. **No connected device/emulator:** installation, native layout/rendering and audible PTT remain unverified. These checks do not prove device behaviour.
+- **No audio, network, authentication, 120-second-cap, radio-entrance or history-model change.** No Echo/AI backend, no background delivery, no store/readiness claim. No new GPS. The theme is **unchanged**. **Missing transcripts and the new audience-group / onboarding work are NOT fixed.** Known pre-existing: the name hub may still show a cached label until the next sign-in. Residuals not addressed: a slow ~20 s HTTP deadline and a 30 s STT timeout remain; first-load Android transcript fan-out may delay polling.
+- **Manual acceptance (install over 0.1.18; do not uninstall first):** confirm **Vistas Mobility PTT · 0.1.19**; sign in, select a channel, open the Messages panel — your own authored clips appear in retained history and you can manually Listen/Re-listen them; no retained history (yours or others') autoplays at sign-in; rotate the device — the session and selected channel/tab stay.
+
+### Historical build — 0.1.18: rotation keeps the live session + manual replay preemption (superseded by 0.1.19; stable fallback)
 
 - versionCode **19**, versionName **0.1.18**; Android **14+**; same package `com.vistasmobility.ptt.preview` and same debug signing identity as 0.1.17.
 - Size **2,974,965 bytes**; SHA-256 `ec8a0b6b5a8eeef97be94931fef192de815cde60505e6514312cf9fe5b02b549`.
