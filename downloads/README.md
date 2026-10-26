@@ -1,8 +1,20 @@
 # Vistas Mobility PTT — Android build
 
-## Current download: **[Vistas Mobility PTT 0.1.20](https://raw.githubusercontent.com/kdessinger/vistas-mobility-ptt-app/main/downloads/vistas-ptt-0.1.20.apk)**
+## Current download: **[Vistas Mobility PTT 0.1.27](https://raw.githubusercontent.com/kdessinger/vistas-mobility-ptt-app/main/downloads/vistas-ptt-0.1.27.apk)**
 
-### Current build — 0.1.20: Play/Stop toggle + stuck playback-label repair (Chats + Messages)
+### Current build — 0.1.27: native bundled-video entrance + dark-theme repair; web console Clear-all repair
+
+- versionCode **28**, versionName **0.1.27**; Android **14+**; same package `com.vistasmobility.ptt.preview` and the same debug signing identity as the earlier downloads (signer cert SHA-256 `5a68b1bc38dd832fbade54b396dc843095a1035669f22b5df36dd94a84f3fa85`), so it installs **over** an existing build without uninstalling.
+- Size **5,308,949 bytes**; SHA-256 `dcf8e47d6f5bf4e7fb28a657547b6ce11ffec6a08162dbb160a0ed52c8013024`.
+- **Native bundled-video entrance.** The post-login entrance is now the one supplied local clip (`res/raw/radio_intro_spin.mp4`, H.264/AAC 1152×768 24 fps 5.184 s) played through a native `MediaPlayer` onto a `TextureView` — no WebView, no JS, no network. The clip is bundled **byte-identical** to the authorized source (verified on disk and after extraction from this packaged APK). The `TextureView` coordinate-basis blocker is fixed: framing is composed over the framework's base fill so FIT shows the whole radio uncropped and centred and COVER fills edge-to-edge with no black band.
+- **Dark-theme repair (supersedes 0.1.25).** The 0.1.25 build FAILED human/device theme acceptance — with **Dark** selected it rendered light backgrounds (`#ffffff` header/cards, `#f4f7fa` root) under dark-palette text and accents, unreadable. 0.1.26 repaired the in-place repaint so backgrounds follow the theme, matching text/accents; this build carries that repair.
+- **Echo / channel preview groundwork.** New preview classes (`Echo`, `ChannelMonitor`, `ChannelRow`, `ColorScheme`, `Contrast`) plus the chat-thread increment (channel navigation, message bubbles, docked PTT).
+- **Web console "Clear all messages" repair.** **Clear all** is a personal, reversible *view* hide for the selected channel (recordings/transcripts are kept) — not a server delete. A real defect is fixed where cleared clips reappeared after a reload (`loadDismissed()` ran before the tenant/user context was assigned); the empty state is now channel-scoped, and the standing scope/recording notices were relocated into **Communication information** (danger/error feedback is never moved there). The associated backend waveform **preview** route is dev/preview only.
+- **Verification (real exits).** Canonical Android JVM harness **exit 0** (`RadioIntroFramingTest` 1777, `RadioIntroVideoHooksTest` 72, `RadioIntroTest` 63, plus the history/rotation/shell callback suites); offline `assembleDebug` exit 0 and offline `lintDebug` exit 0 (0 errors, 46 warnings = 0.1.26 baseline); web suite **110 tests** plus real-browser Clear-all checks pass. A bounded dex secret/credential/private-address scan is clean (embedded origin is the public `https://ptt.kdessinger.com` only). **No connected device/emulator:** on-device decode, layout/rendering and audible PTT remain unverified — these checks do not prove device behaviour.
+- **This packaging does NOT change the backend or any account.** No migration, service restart, channel assignment, membership, grant, account or credential change is part of this build; installing it will not make an expired channel reappear. The **assigned room remains expired / authorization-blocked**.
+- **Manual acceptance:** install over any earlier build (do not uninstall first); confirm **Vistas Mobility PTT · 0.1.27**; sign in — the native entrance clip plays, then the app opens on the Chats/Channels surface; switch **Appearance** to **Dark** — header, cards and content background all go dark (no light-on-light text); on the web console, **Clear all** hides the selected channel's messages from your view only and they stay hidden after a reload, with **Restore dismissed** bringing them back.
+
+### Historical build — 0.1.20: Play/Stop toggle + stuck playback-label repair (Chats + Messages)
 
 - versionCode **21**, versionName **0.1.20**; Android **14+**; same package `com.vistasmobility.ptt.preview` and same debug signing identity as 0.1.19.
 - Size **2,975,773 bytes**; SHA-256 `0d42dd699d9d3e9b719a5791a528cc911dc875c4c347f33dd7102f76ec0c41ab`.
